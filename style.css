@@ -1,0 +1,719 @@
+/* ===== CSS VARIABLES & RESET ===== */
+:root {
+    --bg-dark: #0f0f1a;
+    --bg-card: #1a1a2e;
+    --accent: #6c63ff;
+    --accent-hover: #5a52e0;
+    --text-light: #e0e0f0;
+    --text-muted: #8888aa;
+    --border-subtle: #2a2a44;
+    --success: #4ade80;
+    --danger: #f87171;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===== EDITOR PANEL ===== */
+#editor-panel {
+    width: 380px;
+    min-width: 380px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-subtle);
+    padding: 24px 20px;
+    overflow-y: auto;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+.editor-header h1 {
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 4px;
+    margin-bottom: 20px;
+}
+
+.editor-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.editor-section h3 {
+    font-size: 0.9rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.field-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.field-row label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    min-width: 80px;
+}
+
+.field-row input,
+.field-row select {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.field-row input:focus,
+.field-row select:focus {
+    border-color: var(--accent);
+}
+
+/* Item Cards */
+.item-card {
+    background: rgba(108, 99, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.item-card:hover {
+    border-color: var(--accent);
+}
+
+.item-card .item-number {
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.item-card .field-row {
+    margin-bottom: 6px;
+}
+
+.item-card .field-row label {
+    min-width: 55px;
+    font-size: 0.78rem;
+}
+
+.item-card .field-row input {
+    font-size: 0.82rem;
+    padding: 6px 8px;
+}
+
+.btn-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.btn-remove:hover {
+    opacity: 1;
+}
+
+.btn-add {
+    width: 100%;
+    padding: 10px;
+    background: rgba(108, 99, 255, 0.12);
+    border: 1px dashed var(--accent);
+    border-radius: 10px;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-add:hover {
+    background: rgba(108, 99, 255, 0.25);
+}
+
+.editor-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-download,
+.btn-print {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.btn-download {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: #fff;
+}
+
+.btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+}
+
+.btn-print {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-light);
+    border: 1px solid var(--border-subtle);
+}
+
+.btn-print:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+/* ===== BILL PREVIEW ===== */
+#bill-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+    background: #1e1e2f;
+    overflow-y: auto;
+}
+
+.bill-page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    color: #000;
+    padding: 15mm 12mm 10mm 12mm;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    position: relative;
+}
+
+/* Bill Header */
+.bill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1.5px solid #000;
+    padding-bottom: 8px;
+    margin-bottom: 0;
+}
+
+.company-info {
+    flex: 1;
+}
+
+.company-name {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.company-info p {
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.company-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
+}
+
+.logo-circle {
+    width: 50px;
+    height: 50px;
+    border: 2.5px solid #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-circle span {
+    font-size: 20px;
+    font-weight: 900;
+    font-style: italic;
+}
+
+.company-right {
+    text-align: right;
+    font-size: 10px;
+}
+
+.page-info {
+    font-size: 9px;
+    margin-bottom: 2px;
+}
+
+.gstin-top {
+    font-weight: 700;
+    font-size: 10px;
+}
+
+.print-copy {
+    font-weight: 700;
+    margin: 4px 0;
+}
+
+.gst-notice {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* Bill Meta - Customer + Invoice */
+.bill-meta {
+    display: flex;
+    border: 1.5px solid #000;
+    border-top: none;
+}
+
+.customer-box {
+    flex: 1;
+    padding: 6px 8px;
+    border-right: 1.5px solid #000;
+}
+
+.customer-box h4 {
+    font-size: 11px;
+    text-decoration: underline;
+    margin-bottom: 4px;
+}
+
+.cust-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cust-table td {
+    font-size: 11px;
+    padding: 2px 4px;
+    vertical-align: top;
+}
+
+.cust-label {
+    font-weight: 700;
+    width: 80px;
+}
+
+.invoice-box {
+    width: 240px;
+    padding: 6px 8px;
+}
+
+.inv-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.inv-table td {
+    font-size: 11px;
+    padding: 3px 4px;
+}
+
+.inv-label {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.inv-val {
+    text-align: right;
+    font-weight: 600;
+}
+
+/* Items Table */
+.items-section {
+    border: 1.5px solid #000;
+    border-top: none;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table th,
+.items-table td {
+    border: 1px solid #000;
+    padding: 4px 5px;
+    font-size: 10px;
+    text-align: center;
+}
+
+.items-table th {
+    background: #f0f0f0;
+    font-weight: 700;
+    font-size: 10px;
+}
+
+.item-name-col {
+    text-align: left;
+    min-width: 120px;
+}
+
+.items-table td.item-name-cell {
+    text-align: left;
+}
+
+/* Bottom Section */
+.bill-bottom {
+    display: flex;
+    border: 1.5px solid #000;
+    border-top: none;
+    min-height: 50px;
+}
+
+.bottom-left {
+    flex: 1;
+    padding: 4px 6px;
+    border-right: 1.5px solid #000;
+    font-size: 10px;
+}
+
+.round-off-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid #999;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 10px;
+}
+
+.tax-summary {
+    margin-bottom: 6px;
+}
+
+.tax-table {
+    width: 60%;
+    border-collapse: collapse;
+    font-size: 10px;
+}
+
+.tax-table th,
+.tax-table td {
+    padding: 2px 4px;
+    text-align: right;
+    font-size: 10px;
+}
+
+.tax-table th {
+    font-weight: 700;
+    border-bottom: 1px solid #000;
+}
+
+.bank-details {
+    margin-top: 6px;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.bank-details p {
+    margin: 0;
+}
+
+.bottom-right {
+    width: 240px;
+    padding: 4px 6px;
+}
+
+.totals-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.totals-table td {
+    padding: 3px 4px;
+}
+
+.totals-table td:last-child {
+    text-align: right;
+    font-weight: 600;
+}
+
+.total-amount-top {
+    text-align: right !important;
+    font-weight: 700;
+    font-size: 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #999;
+}
+
+.grand-total td {
+    font-weight: 900 !important;
+    font-size: 13px;
+    border-top: 2px solid #000;
+    padding-top: 6px;
+}
+
+/* Footer */
+.bill-footer {
+    display: flex;
+    justify-content: space-between;
+    border: 1.5px solid #000;
+    border-top: none;
+    padding: 6px 8px;
+    min-height: 60px;
+}
+
+.footer-left {
+    flex: 1;
+}
+
+.amount-words {
+    font-weight: 700;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.narration {
+    font-size: 10px;
+    color: #555;
+}
+
+.footer-right {
+    text-align: center;
+    display: flex;
+    align-items: flex-end;
+    padding-left: 30px;
+}
+
+.auth-sig {
+    font-weight: 700;
+    font-size: 11px;
+    border-top: 1px solid #000;
+    padding-top: 4px;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    body {
+        background: #fff;
+    }
+
+    #editor-panel {
+        display: none !important;
+    }
+
+    #bill-wrapper {
+        padding: 0;
+        background: #fff;
+    }
+
+    .bill-page {
+        box-shadow: none;
+        border-radius: 0;
+        width: 100%;
+        min-height: auto;
+        padding: 10mm;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    body {
+        flex-direction: column;
+    }
+
+    #editor-panel {
+        width: 100%;
+        min-width: auto;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    #bill-wrapper {
+        padding: 20px 10px;
+    }
+
+    .bill-page {
+        width: 100%;
+        min-height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    #editor-panel {
+        width: 100%;
+        min-width: auto;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 16px 12px;
+    }
+
+    .editor-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .subtitle {
+        font-size: 0.78rem;
+        margin-bottom: 14px;
+    }
+
+    .editor-section {
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    .field-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        margin-bottom: 8px;
+    }
+
+    .field-row label {
+        min-width: auto;
+        font-size: 0.75rem;
+    }
+
+    .field-row input,
+    .field-row select {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+
+    .item-card {
+        padding: 10px;
+    }
+
+    .item-card .field-row label {
+        min-width: auto;
+    }
+
+    .item-card .field-row input {
+        padding: 8px 10px;
+        font-size: 0.88rem;
+    }
+
+    .editor-actions {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .btn-download,
+    .btn-print {
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 12px;
+    }
+
+    /* Bill preview wrapper */
+    #bill-wrapper {
+        padding: 12px 6px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .bill-page {
+        width: 210mm;
+        min-width: 210mm;
+        min-height: auto;
+        font-size: 10px;
+        padding: 10mm 8mm 8mm 8mm;
+        transform-origin: top left;
+    }
+
+    /* Hint for scrolling */
+    #bill-wrapper::after {
+        content: '← Scroll to see full bill →';
+        display: block;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        padding: 8px 0 4px;
+        position: sticky;
+        bottom: 0;
+        background: #1e1e2f;
+    }
+}
+
+@media (max-width: 480px) {
+    #editor-panel {
+        padding: 12px 8px;
+    }
+
+    .editor-header h1 {
+        font-size: 1.15rem;
+    }
+
+    .editor-section {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .editor-section h3 {
+        font-size: 0.8rem;
+    }
+
+    .btn-download,
+    .btn-print {
+        padding: 14px;
+        font-size: 0.95rem;
+    }
+
+    .bill-page {
+        padding: 8mm 6mm 6mm 6mm;
+    }
+}

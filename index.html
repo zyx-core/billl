@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Generator - Sago Traders</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <!-- ===== EDITOR PANEL ===== -->
+    <div id="editor-panel">
+        <div class="editor-header">
+            <h1>🧾 Bill Generator</h1>
+            <p class="subtitle">Edit items below, preview updates live</p>
+        </div>
+
+        <div class="editor-section">
+            <h3>Invoice Details</h3>
+            <div class="field-row">
+                <label>Date</label>
+                <input type="date" id="inv-date" value="2026-02-23">
+            </div>
+            <div class="field-row">
+                <label>Invoice No</label>
+                <input type="text" id="inv-no" value="S2526\23754">
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <h3>Items</h3>
+            <div id="items-container"></div>
+            <button class="btn-add" onclick="addItem()">+ Add Item</button>
+        </div>
+
+        <div class="editor-actions">
+            <button class="btn-download" onclick="downloadPDF()">📥 Download PDF</button>
+            <button class="btn-print" onclick="window.print()">🖨️ Print</button>
+        </div>
+    </div>
+
+    <!-- ===== BILL PREVIEW ===== -->
+    <div id="bill-wrapper">
+        <div id="bill" class="bill-page">
+            <!-- Header -->
+            <div class="bill-header">
+                <div class="company-info">
+                    <h2 class="company-name">SAGO TRADERS</h2>
+                    <p>ESI JN, Paripally Po,</p>
+                    <p>Kollam - 691574</p>
+                    <p>Mob: 8714549459</p>
+                    <p>E-mail: sagotradersparipally@gmail.com</p>
+                </div>
+                <div class="company-logo">
+                    <div class="logo-circle">
+                        <span>ST</span>
+                    </div>
+                </div>
+                <div class="company-right">
+                    <p class="page-info">Page 1 of 1</p>
+                    <p class="gstin-top">GSTIN:32CBIPB9108F1Z2</p>
+                    <p class="print-copy">Print Copy</p>
+                    <p class="gst-notice">All taxes are collected as per Goods<br>and Services Tax (GST) ACT 2017</p>
+                </div>
+            </div>
+
+            <!-- Customer + Invoice Details -->
+            <div class="bill-meta">
+                <div class="customer-box">
+                    <h4>Customer Details</h4>
+                    <table class="cust-table">
+                        <tr><td class="cust-label">Name</td><td>:</td><td></td></tr>
+                        <tr><td class="cust-label">Party GSTIN</td><td>:</td><td></td></tr>
+                        <tr><td class="cust-label">Phone</td><td>:</td><td></td></tr>
+                        <tr><td class="cust-label">Address</td><td>:</td><td></td></tr>
+                    </table>
+                </div>
+                <div class="invoice-box">
+                    <table class="inv-table">
+                        <tr><td class="inv-label">Date :</td><td id="bill-date" class="inv-val">23-Feb-2026</td></tr>
+                        <tr><td class="inv-label">Invoice No :</td><td id="bill-invno" class="inv-val">S2526\23754</td></tr>
+                        <tr><td class="inv-label">Bill Mode :</td><td class="inv-val">CASH</td></tr>
+                        <tr><td class="inv-label">Place Of Sale :</td><td class="inv-val">Kerala - 32</td></tr>
+                        <tr><td class="inv-label">TaxType :</td><td class="inv-val">GSTR1 B2CS</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="items-section">
+                <table class="items-table" id="bill-items-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th class="item-name-col">ItemName</th>
+                            <th>HSNC/SAC</th>
+                            <th>Qty</th>
+                            <th>UNIT</th>
+                            <th>Rate</th>
+                            <th>SGST%</th>
+                            <th>SGSTAmt</th>
+                            <th>CGST%</th>
+                            <th>CGSTAmt</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bill-items-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="bill-bottom">
+                <div class="bottom-left">
+                    <div class="round-off-row">
+                        <span>Round Off: <span id="bill-roundoff">0.00</span></span>
+                        <span class="subtotal-val" id="bill-subtotal"></span>
+                    </div>
+                    <div class="tax-summary">
+                        <table class="tax-table">
+                            <thead>
+                                <tr>
+                                    <th>Tax%</th>
+                                    <th>Taxable</th>
+                                    <th>CGST</th>
+                                    <th>SGST</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bill-tax-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bank-details">
+                        <p><strong>Bank Details:</strong></p>
+                        <p>A/c. No.12980200002740</p>
+                        <p>IFSC: FDRL0001296</p>
+                        <p>Federal Bank Kizhuvilam Branch.</p>
+                        <p>G PAY : 7736266320</p>
+                    </div>
+                </div>
+                <div class="bottom-right">
+                    <table class="totals-table">
+                        <tr><td colspan="2" class="total-amount-top" id="bill-pretotal"></td></tr>
+                        <tr><td>Tax Amount :</td><td id="bill-taxamt"></td></tr>
+                        <tr><td>CGSTTotal :</td><td id="bill-cgsttotal"></td></tr>
+                        <tr><td>SGSTTotal :</td><td id="bill-sgsttotal"></td></tr>
+                        <tr><td>FRIEGHT:</td><td>0.00</td></tr>
+                        <tr class="grand-total"><td>Bill Amount :</td><td id="bill-grandtotal"></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="bill-footer">
+                <div class="footer-left">
+                    <p id="bill-words" class="amount-words"></p>
+                    <p class="narration"><em>Narration:</em></p>
+                </div>
+                <div class="footer-right">
+                    <p class="auth-sig">Authorised Signatory</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
