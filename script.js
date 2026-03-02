@@ -254,6 +254,8 @@ function downloadPDF() {
     bill.style.display = "block";
     bill.style.overflow = "visible";
     bill.style.height = "297mm";
+    bill.style.transform = "scale(0.96)"; // Scale down slightly to ensure it fits the PDF bounds safely
+    bill.style.transformOrigin = "top center";
     itemsSection.style.flex = "none";
 
     // Calculate remaining height for items section
@@ -263,9 +265,11 @@ function downloadPDF() {
     const bottomH = document.querySelector(".bill-bottom").getBoundingClientRect().height;
     const footerH = document.querySelector(".bill-footer").getBoundingClientRect().height;
     const usedH = headerH + metaH + bottomH + footerH;
-    itemsSection.style.minHeight = (billRect.height - usedH) + "px";
+    itemsSection.style.minHeight = ((billRect.height / 0.96) - usedH) + "px"; // Account for scale
 
     function restoreStyles() {
+        bill.style.transform = "";
+        bill.style.transformOrigin = "";
         bill.style.display = origStyles.display;
         bill.style.overflow = origStyles.overflow;
         bill.style.height = origStyles.height;
