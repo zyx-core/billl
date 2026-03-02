@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
+
 <body>
 
     <!-- ===== EDITOR PANEL ===== -->
@@ -25,6 +27,10 @@
             <div class="field-row">
                 <label>Invoice No</label>
                 <input type="text" id="inv-no" value="S2526\23754">
+            </div>
+            <div class="field-row">
+                <label>Freight</label>
+                <input type="number" step="0.01" id="inv-freight" value="0.00" oninput="updateBill()">
             </div>
         </div>
 
@@ -70,39 +76,70 @@
                 <div class="customer-box">
                     <h4>Customer Details</h4>
                     <table class="cust-table">
-                        <tr><td class="cust-label">Name</td><td>:</td><td></td></tr>
-                        <tr><td class="cust-label">Party GSTIN</td><td>:</td><td></td></tr>
-                        <tr><td class="cust-label">Phone</td><td>:</td><td></td></tr>
-                        <tr><td class="cust-label">Address</td><td>:</td><td></td></tr>
+                        <tr>
+                            <td class="cust-label">Name</td>
+                            <td>:</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="cust-label">Party GSTIN</td>
+                            <td>:</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="cust-label">Phone</td>
+                            <td>:</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="cust-label">Address</td>
+                            <td>:</td>
+                            <td></td>
+                        </tr>
                     </table>
                 </div>
                 <div class="invoice-box">
                     <table class="inv-table">
-                        <tr><td class="inv-label">Date :</td><td id="bill-date" class="inv-val">23-Feb-2026</td></tr>
-                        <tr><td class="inv-label">Invoice No :</td><td id="bill-invno" class="inv-val">S2526\23754</td></tr>
-                        <tr><td class="inv-label">Bill Mode :</td><td class="inv-val">CASH</td></tr>
-                        <tr><td class="inv-label">Place Of Sale :</td><td class="inv-val">Kerala - 32</td></tr>
-                        <tr><td class="inv-label">TaxType :</td><td class="inv-val">GSTR1 B2CS</td></tr>
+                        <tr>
+                            <td class="inv-label">Date :</td>
+                            <td id="bill-date" class="inv-val">23-Feb-2026</td>
+                        </tr>
+                        <tr>
+                            <td class="inv-label">Invoice No :</td>
+                            <td id="bill-invno" class="inv-val">S2526\23754</td>
+                        </tr>
+                        <tr>
+                            <td class="inv-label">Bill Mode :</td>
+                            <td class="inv-val">CASH</td>
+                        </tr>
+                        <tr>
+                            <td class="inv-label">Place Of Sale :</td>
+                            <td class="inv-val">Kerala - 32</td>
+                        </tr>
+                        <tr>
+                            <td class="inv-label">TaxType :</td>
+                            <td class="inv-val">GSTR1 B2CS</td>
+                        </tr>
                     </table>
                 </div>
             </div>
 
-            <!-- Items Table -->
+            <!-- Items Table - stretches to fill page -->
             <div class="items-section">
                 <table class="items-table" id="bill-items-table">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th class="item-name-col">ItemName</th>
-                            <th>HSNC/SAC</th>
-                            <th>Qty</th>
-                            <th>UNIT</th>
-                            <th>Rate</th>
-                            <th>SGST%</th>
-                            <th>SGSTAmt</th>
-                            <th>CGST%</th>
-                            <th>CGSTAmt</th>
-                            <th>Total</th>
+                            <th class="col-no">No</th>
+                            <th class="col-name">ItemName</th>
+                            <th class="col-hsn">HSNC/SAC</th>
+                            <th class="col-qty">Qty</th>
+                            <th class="col-unit">UNIT</th>
+                            <th class="col-rate">Rate</th>
+                            <th class="col-sgst">SGST%</th>
+                            <th class="col-sgstamt">SGSTAmt</th>
+                            <th class="col-cgst">CGST%</th>
+                            <th class="col-cgstamt">CGSTAmt</th>
+                            <th class="col-total">Total</th>
                         </tr>
                     </thead>
                     <tbody id="bill-items-body">
@@ -136,17 +173,34 @@
                         <p>A/c. No.12980200002740</p>
                         <p>IFSC: FDRL0001296</p>
                         <p>Federal Bank Kizhuvilam Branch.</p>
-                        <p>G PAY : 7736266320</p>
+                        <p>G PAY : 7736265320</p>
                     </div>
                 </div>
                 <div class="bottom-right">
                     <table class="totals-table">
-                        <tr><td colspan="2" class="total-amount-top" id="bill-pretotal"></td></tr>
-                        <tr><td>Tax Amount :</td><td id="bill-taxamt"></td></tr>
-                        <tr><td>CGSTTotal :</td><td id="bill-cgsttotal"></td></tr>
-                        <tr><td>SGSTTotal :</td><td id="bill-sgsttotal"></td></tr>
-                        <tr><td>FRIEGHT:</td><td>0.00</td></tr>
-                        <tr class="grand-total"><td>Bill Amount :</td><td id="bill-grandtotal"></td></tr>
+                        <tr>
+                            <td colspan="2" class="total-amount-top" id="bill-pretotal"></td>
+                        </tr>
+                        <tr>
+                            <td>Tax Amount :</td>
+                            <td id="bill-taxamt"></td>
+                        </tr>
+                        <tr>
+                            <td>CGSTTotal :</td>
+                            <td id="bill-cgsttotal"></td>
+                        </tr>
+                        <tr>
+                            <td>SGSTTotal :</td>
+                            <td id="bill-sgsttotal"></td>
+                        </tr>
+                        <tr>
+                            <td>FRIEGHT:</td>
+                            <td id="bill-freight">0.00</td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td>Bill Amount :</td>
+                            <td id="bill-grandtotal"></td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -166,4 +220,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>

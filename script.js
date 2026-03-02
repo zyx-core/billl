@@ -69,7 +69,7 @@ function renderEditor() {
                 <select onchange="updateItem(${i},'unit',this.value)">
                     <option ${item.unit === "NOS" ? "selected" : ""}>NOS</option>
                     <option ${item.unit === "PKT" ? "selected" : ""}>PKT</option>
-                    <option ${item.unit === "KG" ? "selected" : ""}>KG</option>
+                    <option ${item.unit === "KGS" ? "selected" : ""}>KGS</option>
                     <option ${item.unit === "MTR" ? "selected" : ""}>MTR</option>
                     <option ${item.unit === "LTR" ? "selected" : ""}>LTR</option>
                     <option ${item.unit === "BOX" ? "selected" : ""}>BOX</option>
@@ -135,6 +135,10 @@ function updateBill() {
     // Invoice No
     document.getElementById("bill-invno").textContent = document.getElementById("inv-no").value;
 
+    // Freight
+    const freight = parseFloat(document.getElementById("inv-freight").value) || 0;
+    document.getElementById("bill-freight").textContent = freight.toFixed(2);
+
     // Items table
     const tbody = document.getElementById("bill-items-body");
     tbody.innerHTML = "";
@@ -183,21 +187,26 @@ function updateBill() {
         tbody.appendChild(tr);
     });
 
-    // Add empty rows to fill space (min 8 total rows)
-    const emptyRows = Math.max(0, 8 - items.length);
+    // Add empty rows to fill remaining space
+    // Use a large number; CSS flex will handle the stretching
+    const minRows = 15;
+    const emptyRows = Math.max(0, minRows - items.length);
     for (let i = 0; i < emptyRows; i++) {
         const tr = document.createElement("tr");
+        tr.className = "empty-row";
         tr.innerHTML = `<td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>`;
         tbody.appendChild(tr);
     }
 
-    // Totals
-    const roundedBill = Math.round(totalAmount);
-    const roundOff = roundedBill - totalAmount;
+    // Totals with freight
+    const subBeforeRound = totalAmount;
+    const totalWithFreight = totalAmount + freight;
+    const roundedBill = Math.round(totalWithFreight);
+    const roundOff = roundedBill - totalWithFreight;
 
     document.getElementById("bill-roundoff").textContent = roundOff.toFixed(2);
-    document.getElementById("bill-subtotal").textContent = totalAmount.toFixed(2);
-    document.getElementById("bill-pretotal").textContent = totalAmount.toFixed(2);
+    document.getElementById("bill-subtotal").textContent = subBeforeRound.toFixed(2);
+    document.getElementById("bill-pretotal").textContent = subBeforeRound.toFixed(2);
     document.getElementById("bill-taxamt").textContent = (totalSGST + totalCGST).toFixed(2);
     document.getElementById("bill-cgsttotal").textContent = totalCGST.toFixed(2);
     document.getElementById("bill-sgsttotal").textContent = totalSGST.toFixed(2);
@@ -226,14 +235,59 @@ function updateBill() {
 // ===== PDF DOWNLOAD =====
 function downloadPDF() {
     const bill = document.getElementById("bill");
+    const itemsSection = document.querySelector(".items-section");
+
+    // Ensure filename is safe (replace spaces, slashes, etc)
+    let rawInvNo = (document.getElementById("inv-no").value || "Draft");
+    let safeInvNo = rawInvNo.replace(/[\\/:\*\?"<>\| ]/g, "_");
+    const filename = `Invoice_${safeInvNo}.pdf`;
+
+    // Temporarily switch from flex to block for html2canvas compatibility
+    const origStyles = {
+        display: bill.style.display,
+        overflow: bill.style.overflow,
+        height: bill.style.height,
+        itemsFlex: itemsSection.style.flex,
+        itemsMinHeight: itemsSection.style.minHeight
+    };
+
+    bill.style.display = "block";
+    bill.style.overflow = "visible";
+    bill.style.height = "297mm";
+    itemsSection.style.flex = "none";
+
+    // Calculate remaining height for items section
+    const billRect = bill.getBoundingClientRect();
+    const headerH = document.querySelector(".bill-header").getBoundingClientRect().height;
+    const metaH = document.querySelector(".bill-meta").getBoundingClientRect().height;
+    const bottomH = document.querySelector(".bill-bottom").getBoundingClientRect().height;
+    const footerH = document.querySelector(".bill-footer").getBoundingClientRect().height;
+    const usedH = headerH + metaH + bottomH + footerH;
+    itemsSection.style.minHeight = (billRect.height - usedH) + "px";
+
+    function restoreStyles() {
+        bill.style.display = origStyles.display;
+        bill.style.overflow = origStyles.overflow;
+        bill.style.height = origStyles.height;
+        itemsSection.style.flex = origStyles.itemsFlex;
+        itemsSection.style.minHeight = origStyles.itemsMinHeight;
+    }
+
     const opt = {
         margin: 0,
-        filename: `Invoice_${document.getElementById("inv-no").value.replace(/\\/g, "_")}.pdf`,
+        filename: filename,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
     };
-    html2pdf().set(opt).from(bill).save();
+
+    html2pdf().set(opt).from(bill).save().then(function () {
+        restoreStyles();
+    }).catch(function (err) {
+        restoreStyles();
+        console.error("PDF download failed:", err);
+        alert("PDF download failed: " + err.message);
+    });
 }
 
 // ===== NUMBER TO WORDS =====
